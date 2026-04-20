@@ -28,7 +28,7 @@ class ExcelManagerFrame(ttk.Frame):
 
         file_panel = ttk.LabelFrame(main, text="Files", style="Card.TLabelframe")
         file_panel.grid(row=0, column=0, rowspan=3, sticky="ns", padx=(0, 12))
-        self.file_listbox = tk.Listbox(file_panel, height=16, exportselection=False, bg="#ffffff", fg="#111827")
+        self.file_listbox = tk.Listbox(file_panel, height=16, exportselection=False)
         self.file_listbox.pack(fill="both", expand=True, padx=8, pady=8)
         self.file_listbox.bind("<<ListboxSelect>>", self._on_file_select)
 
@@ -302,7 +302,11 @@ class ExcelManagerFrame(ttk.Frame):
         excel_row = self.row_index_map[view_row_index]
         excel_col = int(column_id.replace("#", ""))
         current_value = worksheet.cell(row=excel_row, column=excel_col).value
-        new_value = simpledialog.askstring("Edit Cell", f"Update {get_column_letter(excel_col)}{excel_row}", initialvalue="" if current_value is None else str(current_value))
+        new_value = simpledialog.askstring(
+            "Edit Cell",
+            f"Update {get_column_letter(excel_col)}{excel_row}",
+            initialvalue="" if current_value is None else str(current_value),
+        )
         if new_value is None:
             return
         worksheet.cell(row=excel_row, column=excel_col).value = new_value

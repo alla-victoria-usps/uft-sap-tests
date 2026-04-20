@@ -151,8 +151,12 @@ class AutomationHubApp(tk.Tk):
                 fill="x", padx=12, pady=4
             )
 
-        self.status_var = tk.StringVar(value="")
-        self._update_status_bar()
+        self.status_var = tk.StringVar(
+            value=(
+                f"ALM: {self.status_map['alm']} | SAP: {self.status_map['sap']} | "
+                f"GitHub: {self.status_map['github']} | Excel: {self.status_map['excel']}"
+            )
+        )
         status_bar = ttk.Label(self, textvariable=self.status_var, style="Status.TLabel", anchor="w")
         status_bar.grid(row=1, column=0, columnspan=2, sticky="ew")
 
