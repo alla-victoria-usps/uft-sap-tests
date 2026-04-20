@@ -25,7 +25,7 @@ class DocumentManagerFrame(ttk.Frame):
         ttk.Button(btn_row, text="Attach Document", command=self.attach_document).pack(side="left", padx=(0, 8))
         ttk.Button(btn_row, text="Remove", command=self.remove_selected).pack(side="left", padx=(0, 8))
         ttk.Button(btn_row, text="Save Requirements", command=self.save_requirements).pack(side="left", padx=(0, 8))
-        ttk.Button(btn_row, text="Update Requirements", command=self.save_requirements).pack(side="left")
+        ttk.Button(btn_row, text="Update Requirements", command=self.update_requirements).pack(side="left")
 
         table_frame = ttk.Frame(self, style="Content.TFrame")
         table_frame.pack(fill="both", expand=True, padx=16, pady=(0, 8))
@@ -103,6 +103,13 @@ class DocumentManagerFrame(ttk.Frame):
     def save_requirements(self):
         self._save()
         messagebox.showinfo("Saved", "Requirements saved.")
+
+    def update_requirements(self):
+        if not self.store_path.exists():
+            messagebox.showwarning("No Saved Requirements", "Save requirements at least once before updating.")
+            return
+        self._save()
+        messagebox.showinfo("Updated", "Requirements updated.")
 
     def get_document_count(self):
         return len(self.documents)

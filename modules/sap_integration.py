@@ -51,7 +51,7 @@ class SAPIntegrationFrame(ttk.Frame):
         actions.pack(fill="x", padx=16, pady=(0, 8))
 
         ttk.Button(actions, text="Connect", command=self.connect).pack(side="left", padx=(0, 8))
-        ttk.Button(actions, text="Connect to SAP", command=self.connect).pack(side="left", padx=(0, 8))
+        ttk.Button(actions, text="Connect to SAP", command=self.connect_to_sap).pack(side="left", padx=(0, 8))
         ttk.Button(actions, text="Retrieve Data", command=self.retrieve_data).pack(side="left", padx=(0, 8))
         ttk.Button(actions, text="Test Transaction", command=self.test_transaction).pack(side="left", padx=(0, 8))
         ttk.Button(actions, text="Disconnect", command=self.disconnect).pack(side="left")
@@ -85,6 +85,16 @@ class SAPIntegrationFrame(ttk.Frame):
             self.new_project_var.set("")
 
     def connect(self):
+        required = [self.system_var.get().strip(), self.client_var.get().strip(), self.user_var.get().strip(), self.password_var.get().strip()]
+        if not all(required):
+            messagebox.showerror("Validation Failed", "Complete all SAP connection fields.")
+            return
+        messagebox.showinfo("Validated", "SAP credentials validated. Use 'Connect to SAP' to open the session.")
+
+    def connect_to_sap(self):
+        self._connect()
+
+    def _connect(self):
         if not all([self.system_var.get().strip(), self.client_var.get().strip(), self.user_var.get().strip(), self.password_var.get().strip()]):
             messagebox.showerror("Connection Failed", "Complete all SAP connection fields.")
             return

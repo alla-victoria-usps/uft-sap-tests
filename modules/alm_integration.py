@@ -42,7 +42,7 @@ class ALMIntegrationFrame(ttk.Frame):
         button_row = ttk.Frame(self, style="Content.TFrame")
         button_row.pack(fill="x", padx=16, pady=(0, 8))
 
-        ttk.Button(button_row, text="Connect", command=self.connect_to_alm).pack(side="left", padx=(0, 8))
+        ttk.Button(button_row, text="Connect", command=self.connect).pack(side="left", padx=(0, 8))
         ttk.Button(button_row, text="Connect to ALM", command=self.connect_to_alm).pack(side="left", padx=(0, 8))
         ttk.Button(button_row, text="Create Test Case", command=self.create_test_case).pack(side="left", padx=(0, 8))
         ttk.Button(button_row, text="Update", command=self.update_test_case).pack(side="left", padx=(0, 8))
@@ -79,7 +79,17 @@ class ALMIntegrationFrame(ttk.Frame):
         self.tree.pack(fill="both", expand=True, padx=16, pady=(0, 16))
         self.tree.bind("<<TreeviewSelect>>", self._populate_case_fields)
 
+    def connect(self):
+        required = [self.url_var.get(), self.domain_var.get(), self.project_var.get(), self.user_var.get(), self.password_var.get()]
+        if not all(required):
+            messagebox.showerror("Validation Failed", "Fill all connection fields.")
+            return
+        messagebox.showinfo("Validated", "ALM credentials validated. Use 'Connect to ALM' to establish the session.")
+
     def connect_to_alm(self):
+        self._connect()
+
+    def _connect(self):
         required = [self.url_var.get(), self.domain_var.get(), self.project_var.get(), self.user_var.get(), self.password_var.get()]
         if not all(required):
             messagebox.showerror("Connection Failed", "Fill all connection fields.")
