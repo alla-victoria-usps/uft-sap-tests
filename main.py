@@ -151,12 +151,7 @@ class AutomationHubApp(tk.Tk):
                 fill="x", padx=12, pady=4
             )
 
-        self.status_var = tk.StringVar(
-            value=(
-                f"ALM: {self.status_map['alm']} | SAP: {self.status_map['sap']} | "
-                f"GitHub: {self.status_map['github']} | Excel: {self.status_map['excel']}"
-            )
-        )
+        self.status_var = tk.StringVar(value=self._get_status_text())
         status_bar = ttk.Label(self, textvariable=self.status_var, style="Status.TLabel", anchor="w")
         status_bar.grid(row=1, column=0, columnspan=2, sticky="ew")
 
@@ -193,10 +188,14 @@ class AutomationHubApp(tk.Tk):
         for frame in self.frames.values():
             frame.grid(row=0, column=0, sticky="nsew")
 
-    def _update_status_bar(self):
-        self.status_var.set(
-            f"ALM: {self.status_map['alm']} | SAP: {self.status_map['sap']} | GitHub: {self.status_map['github']} | Excel: {self.status_map['excel']}"
+    def _get_status_text(self):
+        return (
+            f"ALM: {self.status_map['alm']} | SAP: {self.status_map['sap']} | "
+            f"GitHub: {self.status_map['github']} | Excel: {self.status_map['excel']}"
         )
+
+    def _update_status_bar(self):
+        self.status_var.set(self._get_status_text())
 
     def set_status(self, key, value):
         self.status_map[key] = value
