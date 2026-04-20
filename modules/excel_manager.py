@@ -243,23 +243,32 @@ class ExcelManagerFrame(ttk.Frame):
         if not selected:
             messagebox.showwarning("No Selection", "Select one or more rows to delete.")
             return
-        indexes = sorted((self.tree.index(item) for item in selected), reverse=True)
-        for index in indexes:
+        excel_rows = []
+        for item in selected:
+            index = self.tree.index(item)
             if index < len(self.row_index_map):
-                worksheet.delete_rows(self.row_index_map[index], 1)
+                excel_rows.append(self.row_index_map[index])
+        excel_rows.sort(reverse=True)
+        for row_num in excel_rows:
+            worksheet.delete_rows(row_num, 1)
         self._render_sheet()
 
-    def _parse_column_index(self, value: str):
+    def _parse_column_index(self, value: str, max_columns=None):
         candidate = value.strip()
         if not candidate:
             return None
         if candidate.isdigit():
             index = int(candidate)
-            return index if index >= 1 else None
-        try:
-            return column_index_from_string(candidate.upper())
-        except ValueError:
+        else:
+            try:
+                index = column_index_from_string(candidate.upper())
+            except ValueError:
+                return None
+        if index < 1:
             return None
+        if max_columns is not None and index > max_columns:
+            return None
+        return index
 
     def add_column(self):
         worksheet = self._get_sheet()
@@ -268,13 +277,9 @@ class ExcelManagerFrame(ttk.Frame):
             return
         column_name = simpledialog.askstring("Add Column", "Column name (optional):")
         index = max(worksheet.max_column, 1) + 1
+        worksheet.insert_cols(index, 1)
         if column_name:
             header_cell = worksheet.cell(row=1, column=index)
-            if header_cell.value not in (None, "") and not messagebox.askyesno(
-                "Overwrite Header",
-                "The first row already has data for this column. Overwrite it with the new column name?",
-            ):
-                return
             header_cell.value = column_name.strip()
         self._render_sheet()
 
@@ -286,8 +291,8 @@ class ExcelManagerFrame(ttk.Frame):
         target = simpledialog.askstring("Delete Column", "Enter column letter or index (e.g., A or 1):")
         if not target:
             return
-        index = self._parse_column_index(target)
-        if index is None or index > max(worksheet.max_column, 1):
+        index = self._parse_column_index(target, max_columns=max(worksheet.max_column, 1))
+        if index is None:
             messagebox.showwarning("Invalid Column", "Provide a valid existing column letter or index.")
             return
         if not messagebox.askyesno("Confirm Delete", f"Delete column {get_column_letter(index)}?"):
