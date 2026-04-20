@@ -7,6 +7,7 @@ from modules import (
     DatabaseModuleFrame,
     DocumentManagerFrame,
     EmailReporterFrame,
+    ExcelManagerFrame,
     GithubBridgeFrame,
     SAPIntegrationFrame,
     UFTAutomationFrame,
@@ -34,6 +35,7 @@ class DashboardFrame(ttk.Frame):
             ("db", "Database Record Count", "Database Module"),
             ("github", "GitHub Sync Status", "GitHub & VS Code Bridge"),
             ("email", "Last Email Sent", "Email Reporter"),
+            ("excel", "Excel Files Loaded", "📊 Excel Manager"),
         ]
 
         for idx, (key, title, module_name) in enumerate(definitions):
@@ -73,6 +75,7 @@ class AutomationHubApp(tk.Tk):
             "alm": "Disconnected",
             "sap": "Disconnected",
             "github": "Not Synced",
+            "excel": "0 file(s)",
         }
 
         self._configure_style()
@@ -141,13 +144,15 @@ class AutomationHubApp(tk.Tk):
             "Database Module",
             "GitHub & VS Code Bridge",
             "Email Reporter",
+            "📊 Excel Manager",
         ]
         for name in nav_items:
             ttk.Button(sidebar, text=name, style="Sidebar.TButton", command=lambda n=name: self.show_frame(n)).pack(
                 fill="x", padx=12, pady=4
             )
 
-        self.status_var = tk.StringVar(value="ALM: Disconnected | SAP: Disconnected | GitHub: Not Synced")
+        self.status_var = tk.StringVar(value="")
+        self._update_status_bar()
         status_bar = ttk.Label(self, textvariable=self.status_var, style="Status.TLabel", anchor="w")
         status_bar.grid(row=1, column=0, columnspan=2, sticky="ew")
 
@@ -178,17 +183,25 @@ class AutomationHubApp(tk.Tk):
         self.email = EmailReporterFrame(self.content_container, on_change=self.refresh_dashboard)
         self.frames["Email Reporter"] = self.email
 
+        self.excel = ExcelManagerFrame(self.content_container, on_change=self.refresh_dashboard)
+        self.frames["📊 Excel Manager"] = self.excel
+
         for frame in self.frames.values():
             frame.grid(row=0, column=0, sticky="nsew")
 
+    def _update_status_bar(self):
+        self.status_var.set(
+            f"ALM: {self.status_map['alm']} | SAP: {self.status_map['sap']} | GitHub: {self.status_map['github']} | Excel: {self.status_map['excel']}"
+        )
+
     def set_status(self, key, value):
         self.status_map[key] = value
-        self.status_var.set(
-            f"ALM: {self.status_map['alm']} | SAP: {self.status_map['sap']} | GitHub: {self.status_map['github']}"
-        )
+        self._update_status_bar()
         self.refresh_dashboard()
 
     def refresh_dashboard(self):
+        self.status_map["excel"] = f"{self.excel.get_loaded_file_count()} file(s)"
+        self._update_status_bar()
         metrics = {
             "documents": self.document_manager.get_document_count(),
             "alm": "Connected" if self.alm.is_connected() else "Disconnected",
@@ -197,6 +210,7 @@ class AutomationHubApp(tk.Tk):
             "db": self.database.get_record_count(),
             "github": self.github_bridge.get_sync_status(),
             "email": self.email.get_last_sent(),
+            "excel": self.excel.get_loaded_file_count(),
         }
         self.dashboard.update_metrics(metrics)
 
