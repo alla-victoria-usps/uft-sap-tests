@@ -4,7 +4,7 @@ A modular **tkinter + ttk** desktop dashboard for managing QA automation workflo
 
 ## Features
 
-- Sidebar navigation with 7 modules + dashboard home
+- Sidebar navigation with 8 modules + dashboard home
 - Dashboard cards with clickable navigation and live summary metrics
 - Bottom status bar for ALM/SAP/GitHub state
 - Professional dark-sidebar + light-content styling
@@ -48,6 +48,12 @@ A modular **tkinter + ttk** desktop dashboard for managing QA automation workflo
    - Recipient checkbox list and email templates
    - Preview panel
    - Simulated send with last-sent timestamp
+
+8. **Excel Document Management**
+   - Import `.xlsx` / `.xls` files and switch between loaded workbooks
+   - Sheet selector + searchable/filterable data grid
+   - Double-click cell editing with row/column add/delete controls
+   - Save, Save As, and CSV export for the active sheet
 
 ## Setup
 

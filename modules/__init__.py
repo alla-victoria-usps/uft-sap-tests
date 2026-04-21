@@ -7,6 +7,7 @@ from .sap_integration import SAPIntegrationFrame
 from .database_module import DatabaseModuleFrame
 from .github_bridge import GithubBridgeFrame
 from .email_reporter import EmailReporterFrame
+from .excel_manager import ExcelManagerFrame
 
 __all__ = [
     "DocumentManagerFrame",
@@ -16,4 +17,5 @@ __all__ = [
     "DatabaseModuleFrame",
     "GithubBridgeFrame",
     "EmailReporterFrame",
+    "ExcelManagerFrame",
 ]
